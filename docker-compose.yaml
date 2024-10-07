@@ -1,0 +1,55 @@
+services:
+  spark-master:
+    image: bitnami/spark:3.5.0
+    container_name: spark-master
+    hostname: spark-master
+    networks:
+      - airflow_net
+    environment:
+      - SPARK_MODE=master
+      - SPARK_USER=spark
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+
+  spark-worker:
+    image: bitnami/spark:3.5.0
+    networks:
+      - airflow_net
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_PORT=7078
+
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airflow
+    hostname: airflow
+    networks:
+      - airflow_net
+    volumes:
+      - ./requirements.txt:/opt/airflow/requirements.txt
+      - ./airflow/airflow_connections.json:/opt/airflow/airflow_connections.json
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/jobs:/opt/airflow/jobs
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=5
+    ports:
+      - "8081:8080"
+      - "4140-4180:4040-4080"
+    command: >
+      bash -c "pip install -r requirements.txt &&
+               airflow db init &&
+               airflow users create --username airflow --password airflow --role Admin --firstname Airflow --lastname Airflow --email airflow@email.com &&
+               airflow connections import airflow_connections.json &&
+               airflow webserver -D &&
+               airflow scheduler -D"
+
+networks:
+  airflow_net:
+    driver: bridge

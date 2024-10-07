@@ -1,0 +1,6 @@
+apache-airflow-providers-apache-spark
+apache-airflow[azure]
+delta-spark
+pandas
+pyspark
+pytest
