@@ -47,7 +47,7 @@ def process_silver_layer():
 
     df_cleaned = df.dropDuplicates().repartition("state")
 
-    delta_blob_container_name = 'silver-layer'
+    container_name = 'silver-layer'
 
     unique_states = df_cleaned.select("state").distinct().collect()
 
@@ -58,12 +58,15 @@ def process_silver_layer():
         pdf = df_partitioned.toPandas()
 
         buffer = BytesIO()
+
         pdf.to_parquet(buffer, index=False)
+
+        buffer.seek(0)
 
         blob_name = f'breweries_data_processed/{state}.parquet'
 
         blob_client = blob_service_client.get_blob_client(
-            container=delta_blob_container_name, blob=blob_name)
+            container=container_name, blob=blob_name)
 
         blob_client.upload_blob(buffer, overwrite=True)
 

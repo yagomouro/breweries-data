@@ -33,20 +33,24 @@ with DAG(
             task_id='bronze_layer',
             dag=dag
         )
+        
         silver_layer = SparkSubmitOperator(
             task_id='silver_layer',
             application='/opt/airflow/jobs/silver_layer.py',
             conn_id='spark_connection',
             verbose=True,
-            conf={
-                "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
-                "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-            },
-            packages="io.delta:delta-spark_2.12:3.2.0",
             dag=dag
         )
 
-        bronze_layer >> silver_layer
+        gold_layer = SparkSubmitOperator(
+            task_id='gold_layer',
+            application='/opt/airflow/jobs/gold_layer.py',
+            conn_id='spark_connection',
+            verbose=True,
+            dag=dag
+        )
+
+        bronze_layer >> silver_layer >> gold_layer
 
     end = DummyOperator(
         task_id='end',

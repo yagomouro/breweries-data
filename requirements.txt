@@ -4,5 +4,6 @@ delta-spark
 pandas
 pyspark
 pytest
+pyarrow
 python-dotenv
 requests
