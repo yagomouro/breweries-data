@@ -1,6 +1,8 @@
 apache-airflow-providers-apache-spark
-apache-airflow[azure]
+azure-storage-blob
 delta-spark
 pandas
 pyspark
 pytest
+python-dotenv
+requests
