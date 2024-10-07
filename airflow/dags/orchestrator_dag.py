@@ -31,6 +31,12 @@ with DAG(
             application='/opt/airflow/jobs/bronze_layer.py',
             conn_id='spark_connection',
             task_id='bronze_layer',
+            dag=dag
+        )
+        silver_layer = SparkSubmitOperator(
+            task_id='silver_layer',
+            application='/opt/airflow/jobs/silver_layer.py',
+            conn_id='spark_connection',
             verbose=True,
             conf={
                 "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
@@ -40,7 +46,7 @@ with DAG(
             dag=dag
         )
 
-        bronze_layer
+        bronze_layer >> silver_layer
 
     end = DummyOperator(
         task_id='end',
