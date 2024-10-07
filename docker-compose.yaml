@@ -35,6 +35,7 @@ services:
       - ./requirements.txt:/opt/airflow/requirements.txt
       - ./airflow/config/airflow_connections.json:/opt/airflow/config/airflow_connections.json
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/jobs:/opt/airflow/jobs
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
