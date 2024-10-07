@@ -7,8 +7,6 @@ import pandas as pd
 
 
 class AzureStorageClient:
-    client: BlobServiceClient
-
     def __init__(self, connection_verify: bool = True) -> None:
         self.client: BlobServiceClient = BlobServiceClient.from_connection_string(
             conn_str=Variable.get('AZURE_STORAGE_CONNECTION_STRING'), connection_verify=connection_verify)
@@ -23,7 +21,7 @@ class AzureStorageClient:
         except:
             return None
 
-    def download_dataframe(self, container: str, blob_path: str, file_type: str) -> pd.DataFrame:
+    def download_blob(self, container: str, blob_path: str, file_type: str) -> pd.DataFrame:
         container_client = self.client.get_container_client(container)
         blobs = container_client.list_blobs(name_starts_with=blob_path)
 

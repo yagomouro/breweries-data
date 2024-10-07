@@ -1,5 +1,5 @@
 from airflow.providers.http.operators.http import HttpOperator
-from storage import AzureStorageClient
+from storage_client import AzureStorageClient
 import logging
 
 
@@ -38,7 +38,7 @@ class BronzeLayerProcessor:
         self.output_container = 'bronze-layer'
 
     def process(self):
-        """Main method to fetch data and upload it to Azure Blob Storage."""
+        """Main method to process the Bronze Layer."""
         api_response = self.api_client.get_data()
 
         self.storage_client.upload_blob(
