@@ -1,40 +1,64 @@
 from airflow.providers.http.operators.http import HttpOperator
-from azure.storage.blob import BlobServiceClient
-from airflow.models import Variable
-import os
+from storage import AzureStorageClient
+import logging
 
 
-def extract_and_upload():
-    response = HttpOperator(
-        task_id='get_breweries',
-        http_conn_id='breweries_api_connection',
-        endpoint='breweries',
-        method='GET',
-        headers={"Content-Type": "application/json"},
-    ).execute(context={})
+class APIClient:
+    """A class responsible for handling API interactions."""
 
-    print('API response received.', response)
+    def __init__(self, http_conn_id: str, endpoint: str) -> None:
+        self.http_conn_id = http_conn_id
+        self.endpoint = endpoint
 
-    local_directory = '/opt/airflow/bronze_layer'
-    os.makedirs(local_directory, exist_ok=True)
-    local_file_path = os.path.join(local_directory, 'breweries_data.json')
+    def get_data(self) -> str:
+        """Fetch data from the Open Brewery DB"""
+        try:
+            response = HttpOperator(
+                task_id='get_api_data',
+                http_conn_id=self.http_conn_id,
+                endpoint=self.endpoint,
+                method='GET',
+                headers={"Content-Type": "application/json"},
+            ).execute(context={})
+            logging.info("API response received successfully")
+            return response
 
-    with open(local_file_path, 'w') as file:
-        file.write(response)
+        except Exception as e:
+            logging.error(f"Failed to fetch data from API: {e}")
+            raise
 
-    print(f'Local file saved at: {local_file_path}')
 
-    azure_container_name = 'bronze-layer'
-    connection_string = Variable.get('AZURE_STORAGE_CONNECTION_STRING')
+class BronzeLayerProcessor:
+    """Processor class for handling bronze layer data"""
 
-    blob_service_client = BlobServiceClient.from_connection_string(
-        connection_string)
-    blob_client = blob_service_client.get_blob_client(
-        container=azure_container_name, blob='breweries_data.json')
+    def __init__(self, api_client: APIClient, storage_client: AzureStorageClient):
+        self.api_client = api_client
+        self.storage_client = storage_client
+        self.local_directory = '/opt/airflow/bronze_layer'
+        self.output_container = 'bronze-layer'
 
-    with open(local_file_path, "rb") as data:
-        blob_client.upload_blob(data, overwrite=True)
+    def process(self):
+        """Main method to fetch data and upload it to Azure Blob Storage."""
+        api_response = self.api_client.get_data()
 
-    print('Data uploaded to Azure Blob Storage.')
+        self.storage_client.upload_blob(
+            blob_name='breweries_data.json',
+            container=self.output_container,
+            data=api_response
+        )
 
-extract_and_upload()
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
+    # Create API and Azure Storage clients
+    api_client = APIClient(
+        http_conn_id='breweries_api_connection', endpoint='breweries')
+
+    storage_client = AzureStorageClient()
+
+    # Create and run the bronze layer processor
+    bronze_layer_processor = BronzeLayerProcessor(
+        api_client=api_client, storage_client=storage_client)
+    
+    bronze_layer_processor.process()
