@@ -33,7 +33,7 @@ services:
       - airflow_net
     volumes:
       - ./requirements.txt:/opt/airflow/requirements.txt
-      - ./airflow/airflow_connections.json:/opt/airflow/airflow_connections.json
+      - ./airflow/config/airflow_connections.json:/opt/airflow/config/airflow_connections.json
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/jobs:/opt/airflow/jobs
     environment:
@@ -46,7 +46,7 @@ services:
       bash -c "pip install -r requirements.txt &&
                airflow db init &&
                airflow users create --username airflow --password airflow --role Admin --firstname Airflow --lastname Airflow --email airflow@email.com &&
-               airflow connections import airflow_connections.json &&
+               airflow connections import config/airflow_connections.json &&
                airflow webserver -D &&
                airflow scheduler -D"
 
