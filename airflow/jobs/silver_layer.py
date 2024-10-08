@@ -83,7 +83,6 @@ class AzureStorageClient:
             raise
 
 
-
 class SparkManager:
     def __init__(self, app_name: str = "spark_app", delta_version: str = "io.delta:delta-core_2.12:1.1.0"):
         self.app_name = app_name
@@ -129,6 +128,7 @@ class SparkManager:
         except Exception as e:
             logging.error(f"Error defining brewery schema: {e}")
             return None
+
 
 class SilverLayerProcessor:
     """Processor class for handling silver layer data"""
