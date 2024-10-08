@@ -163,3 +163,5 @@ cython_debug/
 
 testz*
 testz.*
+
+.vscode/

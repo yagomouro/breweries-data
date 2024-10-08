@@ -50,23 +50,22 @@ def spark_jobs_orchestration():
 
     with TaskGroup('datalake_spark_jobs') as spark_jobs:
 
-        # bronze_layer = SparkSubmitTask(
-        #     task_id='bronze_layer',
-        #     application='/opt/airflow/jobs/bronze_layer.py'
-        # ).get_task()
+        bronze_layer = SparkSubmitTask(
+            task_id='bronze_layer',
+            application='/opt/airflow/jobs/bronze_layer.py'
+        ).get_task()
 
-        # silver_layer = SparkSubmitTask(
-        #     task_id='silver_layer',
-        #     application='/opt/airflow/jobs/silver_layer.py'
-        # ).get_task()
+        silver_layer = SparkSubmitTask(
+            task_id='silver_layer',
+            application='/opt/airflow/jobs/silver_layer.py'
+        ).get_task()
 
         gold_layer = SparkSubmitTask(
             task_id='gold_layer',
             application='/opt/airflow/jobs/gold_layer.py'
         ).get_task()
 
-        # bronze_layer >> silver_layer >> 
-        gold_layer
+        bronze_layer >> silver_layer >> gold_layer
 
     end_task = DummyOperator(task_id='end')
 
