@@ -97,9 +97,9 @@ After the transformation process was complete, the final dataset was saved using
 ## Containerization
 In this project, I used **Docker** to achieve efficient containerization, making deployment and management of services a breeze. I created a custom **Dockerfile** to set up an Airflow container that includes all the essential components, like Java and Apache Spark, which are crucial for data processing and orchestration.
 
-With Docker Compose, I built an architecture featuring three main services: a Spark master, a Spark worker, and the Airflow instance. The Spark master takes charge of managing cluster resources, while the worker executes tasks to ensure smooth data processing.
+Using Docker Compose, the architecture was designed with three main services: a Spark master, a Spark worker, and the Airflow instance. The Spark master manages cluster resources, while the worker executes tasks to ensure smooth data processing.
 
-I configured the Airflow service to initialize the database, establish connections, and run the web server and scheduler in the background. This containerized approach enhances scalability and simplifies the management of the data pipeline, facilitating effective orchestration of data workflows.
+The Airflow service was configured to initialize the database, establish connections, and run the web server and scheduler in the background. This containerized approach enhances scalability and simplifies data pipeline management, enabling effective orchestration of data workflows.
 
 ## Data Lake Architecture
 The architecture of the Data Lake is built to utilize Azure Cloud Services for effective data management and accessibility. A dedicated Azure Resource Group hosts the **Azure Data Lake Storage Gen2**, providing a scalable and secure environment for storing large volumes of data.
