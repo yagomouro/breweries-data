@@ -5,14 +5,18 @@ from airflow.utils.dates import days_ago
 from airflow.utils.task_group import TaskGroup
 from datetime import timedelta
 from airflow.decorators import dag
+import logging
 
 default_args = {
     'owner': 'Yago Mouro',
     'depends_on_past': False,
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 2,
+    'retries': 3,
     'retry_delay': timedelta(minutes=5),
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'email': ['yagormouro@gmail.com']
 }
 
 
@@ -26,6 +30,11 @@ class SparkSubmitTask:
         self.retries = retries
         self.retry_delay = retry_delay
 
+    def failure_email(context):
+        logging.error(context["task_instance"])
+
+        raise Exception(context["task_instance"])
+
     def get_task(self):
         return SparkSubmitOperator(
             task_id=self.task_id,
@@ -33,7 +42,7 @@ class SparkSubmitTask:
             conn_id=self.conn_id,
             verbose=True,
             retries=self.retries,
-            retry_delay=self.retry_delay
+            retry_delay=self.retry_delay,
         )
 
 

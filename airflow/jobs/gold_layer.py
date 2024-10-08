@@ -12,83 +12,122 @@ import pandas as pd
 
 
 class AzureStorageClient:
-    def __init__(self, connection_verify: bool = True) -> None:
-        self.client: BlobServiceClient = BlobServiceClient.from_connection_string(
-            conn_str=Variable.get('AZURE_STORAGE_CONNECTION_STRING'), connection_verify=connection_verify)
+    def __init__(self) -> None:
+        try:
+            self.client = BlobServiceClient.from_connection_string(
+                conn_str=Variable.get('AZURE_STORAGE_CONNECTION_STRING'))
+
+        except Exception as e:
+            logging.error(f"Failed to create BlobServiceClient: {e}")
+            raise
 
     def upload_blob(self, blob_name: str, data: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]], container: str) -> str:
-        blob_client = self.client.get_blob_client(
-            container=container, blob=blob_name)
-
         try:
+            blob_client = self.client.get_blob_client(
+                container=container, blob=blob_name)
+
             blob_client.upload_blob(data=data, overwrite=True)
+
+            logging.info(
+                f"Blob {blob_name} uploaded successfully to container {container}.")
             return blob_client.url
-        except:
-            return None
+
+        except Exception as e:
+            logging.error(
+                f"Failed to upload blob {blob_name} to container {container}: {e}")
+            raise
 
     def download_blob(self, container: str, blob_path: str, file_type: str) -> pd.DataFrame:
-        container_client = self.client.get_container_client(container)
-        blobs = container_client.list_blobs(name_starts_with=blob_path)
+        try:
 
-        df_full = pd.DataFrame()
+            container_client = self.client.get_container_client(container)
+            blobs = container_client.list_blobs(name_starts_with=blob_path)
 
-        if file_type == "json":
-            blob_client = self.client.get_blob_client(
-                container=container, blob=blob_path)
+            df_full = pd.DataFrame()
 
-            stream_downloader = blob_client.download_blob()
-            file_content = stream_downloader.readall()
+            if file_type == "json":
+                blob_client = self.client.get_blob_client(
+                    container=container, blob=blob_path)
+                stream_downloader = blob_client.download_blob()
+                file_content = stream_downloader.readall()
 
-            return file_content
+                logging.info(f"Blob {blob_path} downloaded as JSON.")
+                return file_content
 
-        elif file_type == "parquet":
-            for blob in blobs:
-                if str(blob.name).endswith(f".parquet"):
-                    blob_name = blob.name
-                    blob_client: BlobClient = self.client.get_blob_client(
-                        blob=blob_name, container=container)
-                    with BytesIO() as b:
-                        download_stream = blob_client.download_blob(0)
-                        download_stream.readinto(b)
+            elif file_type == "parquet":
+                for blob in blobs:
+                    if str(blob.name).endswith(f".parquet"):
+                        blob_name = blob.name
+                        blob_client = self.client.get_blob_client(
+                            blob=blob_name, container=container)
 
-                        df = pd.read_parquet(b, engine="pyarrow")
+                        with BytesIO() as b:
+                            download_stream = blob_client.download_blob(0)
+                            download_stream.readinto(b)
 
-                        df_full = pd.concat([df_full, df], ignore_index=True)
+                            df = pd.read_parquet(b, engine="pyarrow")
+                            df_full = pd.concat(
+                                [df_full, df], ignore_index=True)
 
-            return df_full
+                if df_full.empty:
+                    logging.warning(
+                        f"No parquet files found in the path: {blob_path}")
+                else:
+                    logging.info(
+                        f"Parquet files from path {blob_path} downloaded and concatenated successfully.")
+                return df_full
+
+        except Exception as e:
+            logging.error(
+                f"Failed to download blob {blob_path} from container {container}: {e}")
+            raise
 
 
 class SparkManager:
     def __init__(self, app_name: str = "spark_app", delta_version: str = "io.delta:delta-core_2.12:1.1.0"):
         self.app_name = app_name
         self.delta_version = delta_version
+        self.spark_session = None
 
     def create_spark_session(self):
         """Initialize and return a Spark session"""
-        return SparkSession.builder.appName(self.app_name) \
-            .config("spark.jars.packages", self.delta_version) \
-            .getOrCreate()
+        try:
+            self.spark_session = SparkSession.builder.appName(self.app_name) \
+                .config("spark.jars.packages", self.delta_version) \
+                .getOrCreate()
+            logging.info(
+                f"Spark session '{self.app_name}' created successfully.")
+            return self.spark_session
+        except Exception as e:
+            logging.error(f"Error creating Spark session: {e}")
+            return None
 
     def get_breweries_schema(self):
         """Define the schema for the brewery data"""
-        return StructType([
-            StructField('id', StringType(), True),
-            StructField('name', StringType(), True),
-            StructField('brewery_type', StringType(), True),
-            StructField('address_1', StringType(), True),
-            StructField('address_2', StringType(), True),
-            StructField('address_3', StringType(), True),
-            StructField('city', StringType(), True),
-            StructField('state_province', StringType(), True),
-            StructField('postal_code', StringType(), True),
-            StructField('country', StringType(), True),
-            StructField('longitude', StringType(), True),
-            StructField('latitude', StringType(), True),
-            StructField('phone', StringType(), True),
-            StructField('website_url', StringType(), True),
-            StructField('state', StringType(), True),
-            StructField('street', StringType(), True)
-        ])
+        try:
+            schema = StructType([
+                StructField('id', StringType(), True),
+                StructField('name', StringType(), True),
+                StructField('brewery_type', StringType(), True),
+                StructField('address_1', StringType(), True),
+                StructField('address_2', StringType(), True),
+                StructField('address_3', StringType(), True),
+                StructField('city', StringType(), True),
+                StructField('state_province', StringType(), True),
+                StructField('postal_code', StringType(), True),
+                StructField('country', StringType(), True),
+                StructField('longitude', StringType(), True),
+                StructField('latitude', StringType(), True),
+                StructField('phone', StringType(), True),
+                StructField('website_url', StringType(), True),
+                StructField('state', StringType(), True),
+                StructField('street', StringType(), True)
+            ])
+            logging.info("Brewery schema defined successfully.")
+            return schema
+        except Exception as e:
+            logging.error(f"Error defining brewery schema: {e}")
+            return None
 
 
 class GoldLayerProcessor:
