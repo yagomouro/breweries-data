@@ -21,9 +21,9 @@
 ## How to Run the Project
 
 ### Prerequisites
-Before running the project, ensure you have the following installed:
+Before running the project, ensure you have the following configured:
 
-- [Python 3.10+](https://www.python.org/downloads/)
+- [Python 3.11](https://www.python.org/downloads/)
 - [Apache Airflow](https://airflow.apache.org/)
 - [Docker](https://www.docker.com/)
 - [Azure Data Lake Storage Gen2](https://azure.microsoft.com/en-us/services/storage/data-lake-storage/)
@@ -114,7 +114,7 @@ This architecture follows a layered approach, consisting of three primary layers
 
 
 ### Bronze Layer
-In the Bronze Layer, I ingested raw data from the Open Brewery DB API by developing the APIClient class, which utilizes an Airflow HTTP operator to retrieve the data in JSON format. 
+In the Bronze Layer, I ingested raw data from the Open Brewery DB API by developing the `APIClient` class, which utilizes an Airflow HTTP operator to retrieve the data in JSON format. 
 
 The `BronzeLayerProcessor` class then processes this data and uploads it to **Azure Data Lake Storage Gen2**, storing the raw data in the 'bronze-layer' container as breweries_data.json. This ensures easy access for further processing in the Silver and Gold layers, effectively capturing unprocessed data as a solid foundation for future transformations.
 
@@ -144,5 +144,9 @@ As an example of the value this can provide, I created a data analysis dashboard
 You can access the file in `dataviz > BreweriesCase.pbix`:
 
 
-https://github.com/user-attachments/assets/626d2ab6-44f1-4550-80f4-83800ef652af
+
+
+https://github.com/user-attachments/assets/96ae7af7-558f-450c-9a1f-f70595cd73fa
+
+
 
