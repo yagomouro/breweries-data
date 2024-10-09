@@ -85,7 +85,10 @@ The `get_data()` method in the `APIClient` class fetches brewery data using the 
 
 I chose **Apache Airflow** for orchestrating the data pipeline because of its flexibility and robust features. It allows for easy task scheduling, efficient retries, and error management.
 
-I created Directed Acyclic Graphs (DAGs) to define the sequence of operations for data extraction, transformation, and loading into the data lake. This structured approach visualizes dependencies and simplifies debugging, ensuring a reliable workflow that delivers timely insights from the brewery data.
+I created Directed Acyclic Graphs (DAGs) to define the sequence of operations for data extraction, transformation, and loading into the data lake. This structured approach visualizes dependencies and simplifies debugging, ensuring a reliable workflow that delivers timely insights from the brewery data. <br /><br />
+
+![airflow_dags](https://github.com/user-attachments/assets/d0885bc0-f1b7-4d15-9742-4b093de2d187)
+
 
 
 ## Language and Data Transformation
@@ -105,7 +108,10 @@ The Airflow service was configured to initialize the database, establish connect
 ## Data Lake Architecture
 The architecture of the Data Lake is built to utilize Azure Cloud Services for effective data management and accessibility. A dedicated Azure Resource Group hosts the **Azure Data Lake Storage Gen2**, providing a scalable and secure environment for storing large volumes of data.
 
-This architecture follows a layered approach, consisting of three primary layers: Bronze, Silver, and Gold. These layers, also known as Raw, Trusted, and Refined, facilitate a systematic method for data processing.
+This architecture follows a layered approach, consisting of three primary layers: Bronze, Silver, and Gold. These layers, also known as Raw, Trusted, and Refined, facilitate a systematic method for data processing. <br /><br />
+
+![datalake](https://github.com/user-attachments/assets/d0cb4096-a5e7-4804-b390-5ecf999544a9)
+
 
 ### Bronze Layer
 In the Bronze Layer, I ingested raw data from the Open Brewery DB API by developing the APIClient class, which utilizes an Airflow HTTP operator to retrieve the data in JSON format. 
@@ -137,4 +143,6 @@ As an example of the value this can provide, I created a data analysis dashboard
 
 You can access the file in `dataviz > BreweriesCase.pbix`:
 
+
+https://github.com/user-attachments/assets/626d2ab6-44f1-4550-80f4-83800ef652af
 
