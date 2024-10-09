@@ -1,0 +1,22 @@
+{
+    "spark_connection": {
+        "conn_type": "spark",
+        "description": "",
+        "extra": "{\"deploy-mode\": \"client\", \"spark-binary\": \"spark-submit\"}",
+        "host": "spark://spark-master",
+        "login": "",
+        "password": null,
+        "port": 7077,
+        "schema": ""
+    },
+    "breweries_api_connection": {
+        "conn_type": "http",
+        "description": "",
+        "extra": "",
+        "host": "api.openbrewerydb.org",
+        "login": "",
+        "password": null,
+        "port": null,
+        "schema": ""
+    }
+}

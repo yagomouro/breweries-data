@@ -1,0 +1,9 @@
+apache-airflow-providers-apache-spark
+azure-storage-blob
+delta-spark
+pandas
+pyspark
+pytest
+pyarrow
+python-dotenv
+requests
