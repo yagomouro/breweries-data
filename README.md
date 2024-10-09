@@ -68,12 +68,43 @@ To run this project, you need to configure an Azure Storage Data Lake Gen 2, whi
 
 
 
-<br />
-<br />
+## Folder Structure
 
+```
+└── 📁breweries-data-solution          
+    └── 📁airflow                      
+        └── 📁config                    
+            └── airflow_connections.json   # Configuration for external connections in Airflow
+        └── 📁dags                     
+            └── orchestrator_dag.py       # Main DAG file to orchestrate the entire pipeline
+        └── 📁jobs                     
+            └── bronze_layer.py           # Script responsible for ingesting raw data into the Bronze layer
+            └── gold_layer.py             # Script for transforming data into aggregated metrics in the Gold layer
+            └── silver_layer.py           # Script that handles data transformations for the Silver layer
+        └── 📁plugins                  
+            └── spark_manager.py          # Manages Apache Spark sessions for distributed data processing
+            └── storage_client.py         # Handles communication with Azure Data Lake Gen 2
+        └── 📁tests                     
+            └── test_bronze_layer.ipynb   # Jupyter Notebook for testing the ingestion of data into the Bronze layer
+            └── test_gold_layer.ipynb     # Jupyter Notebook for testing the data aggregation in the Gold layer
+            └── test_silver_layer.ipynb   # Jupyter Notebook for testing data transformation in the Silver layer
+    └── 📁dataviz                       
+        └── BreweriesCase.mp4            # Video demo showcasing the solution
+        └── BreweriesCase.pbix           # Power BI report for visualizing insights from the breweries data
+    └── 📁logs                          # Logs for Airflow
+    └── .env.example                     # Example environment file with variable settings to configure the project
+    └── .gitignore                       # Specifies files and folders to be ignored by Git
+    └── docker-compose.yaml              # Docker Compose file to define services for running the project in containers
+    └── Dockerfile                       # Dockerfile to containerize the application and its dependencies
+    └── README.md                        # Readme file
+    └── requirements.txt                 # List of Python dependencies required to run the project
+
+```
+
+<br />
+<br />
 
 # About the project
-
 
 ## API
 
