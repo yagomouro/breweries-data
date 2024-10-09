@@ -6,6 +6,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Azure Storage Connection](#azure-storage-connection)
+  - [Folder Structure](#folder-structure)
 - [About the project](#about-the-project)
   - [API](#api)
   - [Orchestration Tool](#orchestration-tool)
@@ -128,13 +129,20 @@ For data ingestion and transformation, I used PySpark to efficiently read and pr
 Due to limitations in connecting PySpark directly to Azure Data Lake, I chose to store the transformed data in Parquet format instead of Delta Lake. While Delta Lake offers features like ACID transactions, Parquet provides efficient columnar storage and optimized querying, keeping the data well-structured for future analysis.
 
 After the transformation process was complete, the final dataset was saved using Python, which facilitated a seamless integration with the Azure environment.
+<br /><br />
+
+![flow](https://github.com/user-attachments/assets/14204ead-9eef-460a-963f-7ee6eef9cf40)
+
 
 ## Containerization
 In this project, I used **Docker** to achieve efficient containerization, making deployment and management of services a breeze. I created a custom **Dockerfile** to set up an Airflow container that includes all the essential components, like Java and Apache Spark, which are crucial for data processing and orchestration.
 
 Using Docker Compose, the architecture was designed with three main services: a Spark master, a Spark worker, and the Airflow instance. The Spark master manages cluster resources, while the worker executes tasks to ensure smooth data processing.
 
-The Airflow service was configured to initialize the database, establish connections, and run the web server and scheduler in the background. This containerized approach enhances scalability and simplifies data pipeline management, enabling effective orchestration of data workflows.
+The Airflow service was configured to initialize the database, establish connections, and run the web server and scheduler in the background. This containerized approach enhances scalability and simplifies data pipeline management, enabling effective orchestration of data workflows. <br />
+
+
+![docker](https://github.com/user-attachments/assets/eb436c97-a8b1-48fa-ac67-8c5bb7197c36)
 
 ## Data Lake Architecture
 The architecture of the Data Lake is built to utilize Azure Cloud Services for effective data management and accessibility. A dedicated Azure Resource Group hosts the **Azure Data Lake Storage Gen2**, providing a scalable and secure environment for storing large volumes of data.
