@@ -141,7 +141,10 @@ In the broader context of data engineering, a common question arises: **Why inve
 
 As an example of the value this can provide, I created a data analysis dashboard as an extra step in this project. Using the cleaned and structured data extracted from the Silver Layer, I built a dashboard in Power BI connected directly to the Azure Data Lake Storage Gen2. This dashboard provides insights like brewery distribution by state and type, visualized through interactive charts and maps, which demonstrates how well-organized data can be seamlessly leveraged for business intelligence.
 
-You can access the file in `dataviz > BreweriesCase.pbix`:
+You can access the file in `dataviz > BreweriesCase.pbix`, or watch the video demonstration. 
+<br /><br />
+
+**Don't forget to turn on the sound for the best experience! :)**
 
 
 
