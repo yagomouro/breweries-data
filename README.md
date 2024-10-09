@@ -175,6 +175,13 @@ To ensure the reliability of the data processing pipeline, I implemented monitor
 
 I also integrated `try-except` blocks throughout the code to handle potential errors gracefully. This ensures that if issues arise during execution—such as API call failures or data processing errors—the system can respond appropriately and provide clear feedback.
 
+## Trade-offs
+**PySpark** for Data Processing: The trade-off for selecting PySpark is its efficiency in handling distributed data processing. While it effectively manages large datasets, it has a significant learning curve and can complicate debugging for those unfamiliar with Spark.
+
+**Azure Data Lake** for Storage: The trade-off for opting for Azure Data Lake Storage is its ability to support large volumes of data and offer scalability. However, this may incur higher costs and require more complex data governance than traditional databases.
+
+**Docker** for Containerization: The trade-off for implementing Docker is its ability to provide consistent application environments. While it simplifies dependency management and enhances scalability, it adds complexity in managing containers and orchestration.
+
 ## Extra Step: Data Visualization
 In the broader context of data engineering, a common question arises: **Why invest time and resources into complex data transformation processes?** The answer lies in the ability of these processes to turn raw data into actionable insights that can drive business decisions. By systematically transforming and refining data, we enable organizations to extract meaningful information that can impact strategy, operations, and growth.
 
