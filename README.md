@@ -16,6 +16,7 @@
     - [Silver Layer](#silver-layer)
     - [Gold Layer](#gold-layer)
   - [Monitoring and Alerting](#monitoring-and-alerting)
+  - [Extra Step: Data Visualization](#extra-step-data-visualization)
 
 ## How to Run the Project
 
@@ -128,3 +129,12 @@ By utilizing **Azure's** capabilities, the Data Lake architecture ensures that d
 To ensure the reliability of the data processing pipeline, I implemented monitoring and alerting by creating test files for each processor to verify their functionalities. This approach allows for consistent checks on each layer's operations.
 
 I also integrated `try-except` blocks throughout the code to handle potential errors gracefully. This ensures that if issues arise during execution—such as API call failures or data processing errors—the system can respond appropriately and provide clear feedback.
+
+## Extra Step: Data Visualization
+In the broader context of data engineering, a common question arises: **Why invest time and resources into complex data transformation processes?** The answer lies in the ability of these processes to turn raw data into actionable insights that can drive business decisions. By systematically transforming and refining data, we enable organizations to extract meaningful information that can impact strategy, operations, and growth.
+
+As an example of the value this can provide, I created a data analysis dashboard as an extra step in this project. Using the cleaned and structured data extracted from the Silver Layer, I built a dashboard in Power BI connected directly to the Azure Data Lake Storage Gen2. This dashboard provides insights like brewery distribution by state and type, visualized through interactive charts and maps, which demonstrates how well-organized data can be seamlessly leveraged for business intelligence.
+
+You can access the file in `dataviz > BreweriesCase.pbix`:
+
+
