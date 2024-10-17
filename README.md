@@ -17,6 +17,7 @@
     - [Silver Layer](#silver-layer)
     - [Gold Layer](#gold-layer)
   - [Monitoring and Alerting](#monitoring-and-alerting)
+  - [Trade-offs](#trade-offs)
   - [Extra Step: Data Visualization](#extra-step-data-visualization)
 
 ## How to Run the Project
