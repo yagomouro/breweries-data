@@ -5,7 +5,9 @@ from azure.storage.blob import BlobServiceClient, BlobClient
 from io import BytesIO
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType
+import pyspark.sql.functions as f
 from typing import IO, AnyStr, Iterable, Union
+from datetime import datetime as dt
 import json
 import logging
 import pandas as pd
@@ -143,20 +145,33 @@ class SilverLayerProcessor:
     def process(self):
         """Main method to process the Silver Layer."""
 
+        today = dt.now()
+        year = today.strftime("%Y")
+        month = today.strftime("%m")
+        day = today.strftime("%d")
+
         data = self.storage_client.download_blob(
-            container=self.source_container, blob_path='breweries_data.json', file_type='json')
+            container=self.source_container, blob_path=f'{year}/{month}/{day}/breweries_data.json', file_type='json')
 
         breweries_data = json.loads(data)
 
         df = self.spark.createDataFrame(breweries_data, schema=self.schema)
 
-        df_cleaned = df.dropDuplicates().repartition("state")
+        df_cleaned = (
+            df.dropDuplicates()
+            .filter(df['name'].isNotNull())
+            .filter(df['brewery_type'].isNotNull())
+            .withColumn('phone', f.regexp_replace('phone', '[^0-9]', ''))
+            .withColumn('postal_code', f.trim('postal_code'))
+            .withColumn('website_url', f.when(f.col('website_url').rlike('^(http|https)://'), f.col('website_url')).otherwise(f.lit(None)))
+            .repartition("country")
+        )
 
-        unique_states = df_cleaned.select("state").distinct().collect()
+        unique_countries = df_cleaned.select("country").distinct().collect()
 
-        for row in unique_states:
-            state = row['state']
-            df_partitioned = df_cleaned.filter(df_cleaned.state == state)
+        for row in unique_countries:
+            country = row['country']
+            df_partitioned = df_cleaned.filter(df_cleaned.country == country)
 
             pdf = df_partitioned.toPandas()
 
@@ -164,11 +179,11 @@ class SilverLayerProcessor:
             pdf.to_parquet(buffer, index=False)
             buffer.seek(0)
 
-            blob_name = f'breweries_data_processed/{state}.parquet'
+            blob_name = f'breweries_data_processed/{country}.parquet'
             self.storage_client.upload_blob(
                 container=self.target_container, blob_name=blob_name, data=buffer)
 
-            logging.info(f"State {state} data uploaded.")
+            logging.info(f"Country {country} data uploaded.")
 
 
 if __name__ == "__main__":
